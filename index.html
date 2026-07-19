@@ -57,6 +57,8 @@
   .item .fecha{color:var(--gris);font-weight:400}
   .item .nota{font-family:var(--serif);font-size:16px;line-height:1.5;margin:0;color:var(--tinta)}
   .item .tags{font-size:12px;color:var(--turquesaOsc);margin:6px 0 0;font-weight:500}
+  .quienes{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor;line-height:1.5}
   .mes{font-family:var(--serif);font-size:16px;font-weight:600;margin:26px 0 4px;color:var(--turquesaOsc)}
 
   .chip{display:inline-block;padding:8px 14px;border-radius:999px;border:1.5px solid var(--linea);background:var(--tarjeta);font-size:13px;color:var(--gris);white-space:nowrap;font-weight:500}
@@ -83,6 +85,10 @@
   .crono .cf{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:14px;border-top:1px solid var(--linea);gap:10px}
   .crono .cf:first-child{border-top:none}
   .crono .izq{display:flex;align-items:center;gap:9px;font-weight:500}
+  .crono .grupo{display:flex;align-items:center;gap:8px;padding:13px 0 7px;border-top:1px solid var(--linea);
+      font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:600}
+  .crono .grupo:first-child{border-top:none}
+  .crono .sub{padding:7px 0 7px 18px;border-top:none;font-size:14px}
 
   .aviso{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:60;
       background:var(--tinta);color:#fff;padding:11px 20px;border-radius:999px;font-size:14px;font-weight:500;
@@ -101,12 +107,24 @@
 
 /* colores por categoría */
 var COLOR={
-  Familia:"#EC2C82", Trabajo:"#2BA6E8", Salud:"#4CC66E", Cabello:"#8B5CF6",
-  Belleza:"#FF6B4A", Viajes:"#00BFB3", Amigas:"#FFC233", Pareja:"#F0417E",
-  Casa:"#FF8C42", Finanzas:"#00A3A3", Aprendizaje:"#6C5CE7", Bienestar:"#3DD68C",
-  Celebraciones:"#FFB01F"
+  Familia:"#F5187F", Trabajo:"#0EA5E9", Salud:"#22C55E", Cabello:"#8B5CF6",
+  Belleza:"#FF5A5F", Viajes:"#00C2B2", Amigas:"#FBBF24", Casa:"#84CC16",
+  Finanzas:"#0D9488", Aprendizaje:"#6366F1", Bienestar:"#10B981", Celebraciones:"#F43F5E"
 };
-var CATEGORIAS=["Familia","Trabajo","Salud","Cabello","Belleza","Viajes","Amigas","Pareja","Casa","Finanzas","Aprendizaje","Bienestar","Celebraciones"];
+var CATEGORIAS=["Familia","Trabajo","Salud","Cabello","Belleza","Viajes","Amigas","Casa","Finanzas","Aprendizaje","Bienestar","Celebraciones"];
+
+/* personas: eje independiente de la categoría. Agrega o quita los que quieras. */
+var PERSONAS=[
+  {n:"Inés",    color:"#C026D3"},
+  {n:"Pedro",   color:"#F97316"},
+  {n:"Mamá",    color:"#EF4444"},
+  {n:"Alberto", color:"#3B82F6"},
+  {n:"Suegros", color:"#A855F7"}
+];
+function colorPersona(n){
+  for(var i=0;i<PERSONAS.length;i++){ if(PERSONAS[i].n===n)return PERSONAS[i].color; }
+  return "#B3AEBE";
+}
 
 /* frases que aparecen en la pantalla Hoy — cambian cada día */
 var FRASES=[
@@ -131,11 +149,10 @@ var SUBTIPOS={
   Cabello:["Coloración","Canas","Babylights","Corte","Tratamiento","Producto"],
   Belleza:["Facial","Manicure","Pedicure","Masaje","Compra"],
   Salud:["Consulta","Examen","Dental","Kinesiología","Medicamento"],
-  Bienestar:["Ejercicio","Caminata","Lectura","Café sola","Descanso"],
+  Bienestar:["Ejercicio","Caminata","Lectura","Descanso"],
   Casa:["Mantención","Compra","Arreglo","Jardín"],
-  Familia:["Almuerzo","Celebración","Panorama","Logro"],
+  Familia:["Almuerzo","Celebración","Panorama","Logro","Frase","Actividad"],
   Amigas:["Salida","Comida","Viaje","Llamada"],
-  Pareja:["Cita","Aniversario","Panorama","Viaje"],
   Viajes:["Nacional","Internacional","Fin de semana"],
   Trabajo:["Hito","Reunión importante","Logro","Proyecto"],
   Finanzas:["Compra importante","Inversión","Trámite"],
@@ -147,19 +164,22 @@ var PLANTILLAS=[
   {n:"Canas",c:"Cabello",s:"Canas"},
   {n:"Corte",c:"Cabello",s:"Corte"},
   {n:"Salida amigas",c:"Amigas",s:"Salida",mi:true},
-  {n:"Café sola",c:"Bienestar",s:"Café sola",mi:true},
-  {n:"Almuerzo familiar",c:"Familia",s:"Almuerzo"},
-  {n:"Ejercicio",c:"Bienestar",s:"Ejercicio",mi:true}
+  {n:"Ejercicio",c:"Bienestar",s:"Ejercicio",mi:true},
+  {n:"Logro",c:"Familia",s:"Logro"}
 ];
 
 var CRONOLOGIAS=[
   {e:"Coloración",c:"Cabello",s:"Coloración"},
   {e:"Canas",c:"Cabello",s:"Canas"},
+  {e:"Babylights",c:"Cabello",s:"Babylights"},
   {e:"Corte",c:"Cabello",s:"Corte"},
+  {e:"Tratamiento",c:"Cabello",s:"Tratamiento"},
   {e:"Facial",c:"Belleza",s:"Facial"},
+  {e:"Manicure",c:"Belleza",s:"Manicure"},
   {e:"Control médico",c:"Salud",s:"Consulta"},
+  {e:"Dentista",c:"Salud",s:"Dental"},
   {e:"Ejercicio",c:"Bienestar",s:"Ejercicio"},
-  {e:"Mantención casa",c:"Casa",s:"Mantención"}
+  {e:"Mantención",c:"Casa",s:"Mantención"}
 ];
 
 var REGLAS=[
@@ -174,8 +194,7 @@ var REGLAS=[
   {k:["examen"],c:"Salud",s:"Examen"},
   {k:["dentista"],c:"Salud",s:"Dental"},
   {k:["amigas","chiquillas"],c:"Amigas",s:"Salida"},
-  {k:["cita","aniversario"],c:"Pareja",s:"Cita"},
-  {k:["almuerzo familiar","familia"],c:"Familia",s:"Almuerzo"},
+  {k:["familia"],c:"Familia",s:"Almuerzo"},
   {k:["cumpleanos"],c:"Celebraciones",s:"Cumpleaños"},
   {k:["viaje","papudo"],c:"Viajes",s:"Fin de semana"},
   {k:["restaurante","comida"],c:"Amigas",s:"Comida"},
@@ -303,6 +322,12 @@ function itemEntrada(e,conAnio){
 
   var cuerpo=el("div",{style:"flex:1;min-width:0"},[meta]);
   if(e.nota)cuerpo.appendChild(el("p",{class:"nota",text:e.nota}));
+  var quienes=e.personas||[];
+  if(quienes.length){
+    var zq=el("div",{class:"quienes"});
+    quienes.forEach(function(n){ zq.appendChild(el("span",{class:"pill",style:"color:"+colorPersona(n),text:n})); });
+    cuerpo.appendChild(zq);
+  }
   if(e.etiquetas){
     var tags=e.etiquetas.split(",").map(function(t){return "#"+t.trim();}).join("  ");
     cuerpo.appendChild(el("p",{class:"tags",text:tags}));
@@ -363,12 +388,17 @@ function vistaHoy(){
   });
   if(cronos.length){
     var caja=el("div",{class:"crono"});
+    var catActual=null;
     cronos.forEach(function(c){
-      caja.appendChild(el("div",{class:"cf"},[
-        el("span",{class:"izq"},[
+      if(c.cat!==catActual){
+        catActual=c.cat;
+        caja.appendChild(el("div",{class:"grupo",style:"color:"+colorDe(c.cat)},[
           el("span",{class:"punto",style:"background:"+colorDe(c.cat)+";margin-top:0"}),
-          el("span",{text:c.e})
-        ]),
+          el("span",{text:c.cat})
+        ]));
+      }
+      caja.appendChild(el("div",{class:"cf sub"},[
+        el("span",{text:c.e}),
         el("span",{style:"color:var(--gris)",text:haceCuanto(c.ultima)})
       ]));
     });
@@ -386,6 +416,7 @@ function vistaHoy(){
 
 /* ======= pantalla: línea de vida ======= */
 var filtroLinea=null;
+var filtroPersona=null;
 function vistaLinea(){
   var cont=el("div",{class:"pantalla"},[el("h1",{class:"h1",text:"Línea de vida"})]);
 
@@ -399,9 +430,23 @@ function vistaLinea(){
   });
   cont.appendChild(fila);
 
-  var lista=filtroLinea?entradas.filter(function(e){return e.categoria===filtroLinea;}):entradas;
+  var filaP=el("div",{class:"fila",style:"margin-top:8px;margin-bottom:6px"});
+  PERSONAS.forEach(function(pe){
+    var act=filtroPersona===pe.n;
+    filaP.appendChild(el("button",{class:"chip",
+      style:act?"background:"+pe.color+";border-color:"+pe.color+";color:#fff":"color:"+pe.color+";border-color:"+pe.color+"33",
+      text:pe.n,onclick:function(){ filtroPersona=(act?null:pe.n); render(); }}));
+  });
+  cont.appendChild(filaP);
+
+  var lista=entradas.filter(function(e){
+    if(filtroLinea && e.categoria!==filtroLinea)return false;
+    if(filtroPersona && (e.personas||[]).indexOf(filtroPersona)<0)return false;
+    return true;
+  });
   if(!lista.length){
-    cont.appendChild(el("p",{class:"vacio",text:filtroLinea?"Aún no hay recuerdos en "+filtroLinea+".":"Aún no hay recuerdos guardados."}));
+    var filtros=[filtroLinea,filtroPersona].filter(Boolean).join(" + ");
+    cont.appendChild(el("p",{class:"vacio",text:filtros?"Aún no hay recuerdos en "+filtros+".":"Aún no hay recuerdos guardados."}));
     return cont;
   }
   var mesActual=null;
@@ -430,7 +475,7 @@ function vistaBuscar(){
       return;
     }
     var res=entradas.filter(function(e){
-      return norm([e.nota,e.etiquetas,e.categoria,e.subtipo,e.lugar].join(" ")).indexOf(t)>=0;
+      return norm([e.nota,e.etiquetas,e.categoria,e.subtipo,e.lugar,(e.personas||[]).join(" ")].join(" ")).indexOf(t)>=0;
     });
     var resumen=res.length===1?"1 recuerdo":res.length+" recuerdos";
     var p=el("p",{class:"titulo-sec",style:"margin:16px 0 6px"},[
@@ -457,6 +502,7 @@ function abrirEscribir(existente){
     fecha: existente?existente.fecha:hoyIso(),
     categoria: existente?existente.categoria:null,
     subtipo: existente?existente.subtipo:null,
+    personas: existente?((existente.personas||[]).slice()):[],
     etiquetas: existente?(existente.etiquetas||""):"",
     lugar: existente?(existente.lugar||""):"",
     mi: existente?!!existente.mi:false
@@ -473,7 +519,7 @@ function abrirEscribir(existente){
     if(!nota){ alert("Escribe algo para guardar este recuerdo."); area.focus(); return; }
     entradas=entradas.filter(function(x){return x.id!==b.id;});
     entradas.push({id:b.id,fecha:b.fecha,categoria:b.categoria,subtipo:b.subtipo,nota:nota,
-      etiquetas:inpTags.value.trim()||null,lugar:inpLugar.value.trim()||null,mi:b.mi});
+      personas:b.personas.slice(),etiquetas:inpTags.value.trim()||null,lugar:inpLugar.value.trim()||null,mi:b.mi});
     ordenar(); persistir(); cerrar(); render();
     avisar(AL_GUARDAR[Math.floor(Math.random()*AL_GUARDAR.length)]);
   }});
@@ -501,6 +547,9 @@ function abrirEscribir(existente){
   area.value=existente?(existente.nota||""):"";
   p.appendChild(area);
 
+  var zonaQuien=el("div",{style:"margin-bottom:14px"});
+  p.appendChild(zonaQuien);
+
   var zonaCat=el("div");
   p.appendChild(zonaCat);
 
@@ -515,6 +564,21 @@ function abrirEscribir(existente){
   p.appendChild(zonaDetalle);
 
   function refrescar(){
+    zonaQuien.innerHTML="";
+    zonaQuien.appendChild(el("p",{style:"font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.09em;font-weight:600;margin:0 0 8px",text:"¿Con quién?"}));
+    var fq=el("div",{class:"fila"});
+    PERSONAS.forEach(function(pe){
+      var act=b.personas.indexOf(pe.n)>=0;
+      fq.appendChild(el("button",{class:"chip",
+        style:act?"background:"+pe.color+";border-color:"+pe.color+";color:#fff;font-weight:600":"color:"+pe.color+";border-color:"+pe.color+"33",
+        text:pe.n,onclick:function(){
+          if(act)b.personas=b.personas.filter(function(x){return x!==pe.n;});
+          else b.personas.push(pe.n);
+          refrescar();
+        }}));
+    });
+    zonaQuien.appendChild(fq);
+
     zonaCat.innerHTML="";
     if(b.categoria){
       var col=colorDe(b.categoria);
@@ -534,7 +598,7 @@ function abrirEscribir(existente){
       var sug=sugerir(area.value);
       if(sug){
         zonaCat.appendChild(el("button",{class:"chip suave",style:"margin-bottom:12px",
-          text:"¿"+sug.c+" · "+sug.s+"?  Toca para confirmar",
+          text:"¿"+sug.c+(sug.s?" · "+sug.s:"")+"?  Toca para confirmar",
           onclick:function(){ b.categoria=sug.c; b.subtipo=sug.s; refrescar(); }}));
       }
       var fc=el("div",{class:"fila",style:"margin-bottom:12px"});
@@ -564,10 +628,17 @@ function abrirEscribir(existente){
 
   var ultima=null;
   area.addEventListener("input",function(){
-    if(b.categoria)return;
-    var s=sugerir(area.value);
-    var clave=s?s.c+s.s:"";
-    if(clave!==ultima){ ultima=clave; refrescar(); }
+    var cambio=false;
+    var t=norm(area.value);
+    PERSONAS.forEach(function(pe){
+      if(t.indexOf(norm(pe.n))>=0 && b.personas.indexOf(pe.n)<0){ b.personas.push(pe.n); cambio=true; }
+    });
+    if(!b.categoria){
+      var g=sugerir(area.value);
+      var clave=g?g.c+g.s:"";
+      if(clave!==ultima){ ultima=clave; cambio=true; }
+    }
+    if(cambio)refrescar();
   });
 
   refrescar();
@@ -605,6 +676,12 @@ function abrirDetalle(e){
   var extra=[e.lugar,e.mi?"tiempo para mí":null,haceCuanto(e.fecha)].filter(Boolean).join(" · ");
   p.appendChild(el("p",{style:"font-size:13px;color:var(--gris);margin:0 0 22px",text:extra}));
   p.appendChild(el("p",{style:"font-family:var(--serif);font-size:18px;line-height:1.75;white-space:pre-wrap;margin:0",text:e.nota||""}));
+  var qs=e.personas||[];
+  if(qs.length){
+    var zq2=el("div",{class:"quienes",style:"margin-top:20px"});
+    qs.forEach(function(n){ zq2.appendChild(el("span",{class:"pill",style:"color:"+colorPersona(n)+";font-size:13px;padding:5px 13px",text:n})); });
+    p.appendChild(zq2);
+  }
   if(e.etiquetas){
     var tags=e.etiquetas.split(",").map(function(t){return "#"+t.trim();}).join("  ");
     p.appendChild(el("p",{style:"color:var(--turquesaOsc);font-size:13px;font-weight:500;margin-top:20px",text:tags}));
